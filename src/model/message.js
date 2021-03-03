@@ -1,4 +1,8 @@
-export class Message extends model {
+import { Firebase } from "../util/firebase";
+
+import { Model } from "./model";
+
+export class Message extends Model {
     constructor() {
         super();
     }
@@ -303,5 +307,22 @@ export class Message extends model {
         div.firstElementChild.classList.add(className);
 
         return div;
+    }
+
+    static send(chatId, type, from, content) {
+        return Message.getRef(chatId).add({
+            content,
+            timestamp: new Date(),
+            status: 'wait',
+            type,
+            from
+        });
+    }
+
+    static getRef(chatId) {
+        return Firebase.db()
+            .collection('chats')
+            .doc(chatId)
+            .collection('messages');
     }
 }

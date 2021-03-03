@@ -21,7 +21,14 @@ import {
 import {
     User
 } from '../model/user';
-import { Chat } from '../model/chat';
+
+import {
+    Chat
+} from '../model/chat';
+
+import {
+    Message
+} from '../model/message';
 
 export class WhatsappController {
 
@@ -87,7 +94,7 @@ export class WhatsappController {
     initContacts() {
 
         //retorno do evento
-        this._user.on('contactschange', docs  => {
+        this._user.on('contactschange', docs => {
 
             this.el.contactsMessagesList.innerHTML = '';
 
@@ -98,7 +105,7 @@ export class WhatsappController {
                 let div = document.createElement('div');
 
                 div.className = "contact-item";
-        
+
                 div.innerHTML = `
                 <div class="dIyEr">
                     <div class="_1WliW" style="height: 49px; width: 49px;">
@@ -147,41 +154,44 @@ export class WhatsappController {
                         </div>
                     </div>
                 </div>`;
-                
-                if(contact.photo){
+
+                if (contact.photo) {
                     let img = div.querySelector('.photo');
                     img.src = contact.photo;
                     img.show();
-                 }
+                }
 
                 div.on('click', e => {
 
-                    this.el.home.hide();
-                    this.el.main.css({
-                        'display': 'flex'
-                    });
-
-                    this.el.activeName.innerHTML = contact.name;
-                    this.el.activeStatus.innerHTML = contact.status;
-
-                    if(contact.photo){
-                        let img = this.el.activePhoto;
-                        img.src = contact.photo;
-                        img.show();
-                    }
+                    this.setActiveChat(contact);
 
                 });
 
-    
                 this.el.contactsMessagesList.appendChild(div);
 
             });
 
         })
-
         //retorno da promise
         this._user.getContacts();
+    }
 
+    setActiveChat(contact) {
+        this._contactActive = contact;
+
+        this.el.home.hide();
+        this.el.main.css({
+            'display': 'flex'
+        });
+
+        this.el.activeName.innerHTML = contact.name;
+        this.el.activeStatus.innerHTML = contact.status;
+
+        if (contact.photo) {
+            let img = this.el.activePhoto;
+            img.src = contact.photo;
+            img.show();
+        }
     }
 
     iniEvents() {
@@ -245,15 +255,19 @@ export class WhatsappController {
 
                 if (data.name) {
 
-                    Chat.createIfNotExists().then( chat => {
+                    Chat.createIfNotExists(this._user.email, contact.email).then(chat => {
 
                         contact.chatId = chat.id;
+
+                        this._user.chatId = chat.id;
+
+                        contact.addContact(this._user);
 
                         this._user.addContact(contact).then(() => {
                             console.info('contato adicionado');
                             this.el.btnClosePanelAddContact.click();
                         });
-                        
+
                     });
 
 
@@ -469,7 +483,15 @@ export class WhatsappController {
         });
 
         this.el.btnSend.on('click', () => {
-            console.log(this.el.inputText.innerHTML);
+
+            Message.send(this._contactActive.chatId,
+                'text',
+                this._user.email,
+                this.el.inputText.innerHTML)
+
+            this.el.inputText.innerHTML = '';
+
+            this.el.panelEmojis.removeClass('open');
         });
 
         this.el.btnEmojis.on('click', e => {
@@ -585,7 +607,6 @@ export class WhatsappController {
                 json[key] = value;
             })
             return json;
-            ////ha
         }
 
         Element.prototype.hide = function () {

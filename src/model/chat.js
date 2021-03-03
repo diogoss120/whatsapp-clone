@@ -1,6 +1,9 @@
 import {
     Model
 } from "./model";
+import {
+    Firebase
+} from "../util/firebase";
 
 export class Chat extends Model {
 
@@ -8,7 +11,7 @@ export class Chat extends Model {
         super();
     }
 
-    get users () {
+    get users() {
         return this._data.users;
     }
 
@@ -16,7 +19,15 @@ export class Chat extends Model {
         this._data.users = value;
     }
 
-    get timestamp () {
+    get chatId() {
+        return this._data.chatId;
+    }
+
+    set chatId(value) {
+        this._data.chatId = value;
+    }
+
+    get timestamp() {
         return this._data.timestamp;
     }
 
@@ -24,8 +35,57 @@ export class Chat extends Model {
         this._data.timestamp = value;
     }
 
-    static getRef(){
-        return firebase.db.collection('/chats');
+    static getRef() {
+        return Firebase.db().collection('/chats');
+    }
+
+    static createIfNotExists(meEmail, contactEmail) {
+        return new Promise((resolve, reject) => {
+
+            Chat.find(meEmail, contactEmail).then(chats => {
+                if (chats.empty) {
+                    Chat.create(meEmail, contactEmail).then(chat => {
+                        resolve(chat);
+                    })
+                } else {
+                    chats.forEach(chat => {
+                        resolve(chat);
+                    });
+                }
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
+
+    static find(meEmail, contactEmail) {
+
+        return Chat.getRef()
+            .where(btoa(meEmail), '==', true)
+            .where(btoa(contactEmail), '==', true)
+            .get();
+
+    }
+
+    static create(meEmail, contactEmail) {
+        return new Promise((resolve, reject) => {
+            let users = {};
+            users[btoa(meEmail)] = true;
+            users[btoa(contactEmail)] = true;
+
+            Chat.getRef().add({
+                users,
+                timestamp: new Date()
+            }
+            ).then(doc => {
+                Chat.getRef().doc(doc.id).get().then(chat => {
+
+                    resolve(chat);
+
+                }).catch(err => { reject(err) });
+
+            }).catch(err => { reject(err) });
+        });
     }
 
 }
