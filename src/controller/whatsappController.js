@@ -177,6 +177,12 @@ export class WhatsappController {
     }
 
     setActiveChat(contact) {
+
+        if (this._contactActive) {
+            Message.getRef(this._contactActive.chatId)
+                .onSnapshot(() => {});
+        }
+
         this._contactActive = contact;
 
         this.el.home.hide();
@@ -192,6 +198,34 @@ export class WhatsappController {
             img.src = contact.photo;
             img.show();
         }
+
+        Message.getRef(this._contactActive.chatId)
+            .orderBy('timeStamp')
+            .onSnapshot(docs => {
+                this.el.panelMessagesContainer.innerHTML = '';
+
+                docs.forEach(doc => {
+                    let data = doc.data();
+
+                    data.id = doc.id;
+
+                    if (this.el.panelMessagesContainer.querySelector('#_' + data.id)) {
+
+                        let message = new Message();
+
+                        message.fromJSON(data);
+
+                        let me = (this._user.email === data.from);
+
+                        let view = message.getViewElement(me);
+
+                        this.el.panelMessagesContainer.appendChild(view);
+                    }
+
+                })
+
+
+            });
     }
 
     iniEvents() {
