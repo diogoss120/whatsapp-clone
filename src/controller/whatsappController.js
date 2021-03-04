@@ -80,8 +80,6 @@ export class WhatsappController {
 
             });
 
-            //this._user.save();
-
             this.el.appContent.css({
                 display: 'flex'
             })
@@ -93,7 +91,6 @@ export class WhatsappController {
 
     initContacts() {
 
-        //retorno do evento
         this._user.on('contactschange', docs => {
 
             this.el.contactsMessagesList.innerHTML = '';
@@ -101,6 +98,8 @@ export class WhatsappController {
             docs.forEach(doc => {
 
                 let contact = doc.data();
+                console.log('linha 101',doc.data());
+                console.log('da para pegar o contato, tenho que verificar o porque não está passando o id')
 
                 let div = document.createElement('div');
 
@@ -172,7 +171,6 @@ export class WhatsappController {
             });
 
         })
-        //retorno da promise
         this._user.getContacts();
     }
 
@@ -199,21 +197,44 @@ export class WhatsappController {
             img.show();
         }
 
+        console.log('chatId', this._contactActive.chatId);
+
         Message.getRef(this._contactActive.chatId)
             .orderBy('timeStamp')
             .onSnapshot(docs => {
                 this.el.panelMessagesContainer.innerHTML = '';
 
+                console.log('linha 205 whatsappController',docs);
+                console.dir(docs);
+
                 docs.forEach(doc => {
                     let data = doc.data();
+                    
+                    console.log('dados:::',doc.data());
 
                     data.id = doc.id;
+
+                    let message = new Message();
+
+                    message.fromJSON(data);
+
+
+                    let me = (this._user.email === data.from);
+
+                    let view = message.getViewElement(me);
+
+                    this.el.panelMessagesContainer.appendChild(view);
+
+
+                    /*
 
                     if (this.el.panelMessagesContainer.querySelector('#_' + data.id)) {
 
                         let message = new Message();
 
                         message.fromJSON(data);
+
+                        console.log('dados:::',data)
 
                         let me = (this._user.email === data.from);
 
@@ -222,8 +243,9 @@ export class WhatsappController {
                         this.el.panelMessagesContainer.appendChild(view);
                     }
 
-                })
+                    */
 
+                })
 
             });
     }
@@ -268,7 +290,6 @@ export class WhatsappController {
 
         this.el.btnSavePanelEditProfile.on('click', e => {
 
-
             this.el.btnSavePanelEditProfile.disabled = true;
 
             this._user.name = this.el.inputNamePanelEditProfile.innerHTML;
@@ -285,9 +306,12 @@ export class WhatsappController {
             let form = new FormData(this.el.formPanelAddContact);
             let contact = new User(form.get('email'));
 
+            console.log('fora',this._user.email, contact.email)
             contact.on('datachange', data => {
 
                 if (data.name) {
+
+                    console.log(this._user.email, contact.email)
 
                     Chat.createIfNotExists(this._user.email, contact.email).then(chat => {
 
@@ -518,7 +542,8 @@ export class WhatsappController {
 
         this.el.btnSend.on('click', () => {
 
-            Message.send(this._contactActive.chatId,
+            Message.send(
+                this._contactActive.chatId,
                 'text',
                 this._user.email,
                 this.el.inputText.innerHTML)

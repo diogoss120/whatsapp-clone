@@ -319,6 +319,8 @@ export class Message extends Model {
     }
 
     static send(chatId, type, from, content) {
+        console.log('content', content);
+        
         return Message.getRef(chatId).add({
             content,
             timestamp: new Date(),
