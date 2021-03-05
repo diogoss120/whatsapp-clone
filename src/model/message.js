@@ -9,6 +9,7 @@ export class Message extends Model {
         super();
     }
 
+
     get id() {
         return this._data.id;
     }
@@ -45,7 +46,7 @@ export class Message extends Model {
     }
 
     getViewElement(me = true) {
-
+        
         let div = document.createElement('div');
         div.className = 'message';
 
@@ -319,7 +320,7 @@ export class Message extends Model {
     }
 
     static send(chatId, type, from, content) {
-        console.log('content', content);
+        console.log('Message content', content);
         
         return Message.getRef(chatId).add({
             content,

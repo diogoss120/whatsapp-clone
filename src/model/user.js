@@ -27,6 +27,13 @@ export class User extends Model {
 
     }
 
+    get chatId() {
+        return this._data.chatId;
+    }
+    set chatId(value) {
+        this._data.chatId = value;
+    }
+
     get name() {
         return this._data.name;
     }
