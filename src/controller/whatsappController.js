@@ -98,7 +98,7 @@ export class WhatsappController {
             docs.forEach(doc => {
 
                 let contact = doc.data();
-          
+
                 let div = document.createElement('div');
 
                 div.className = "contact-item";
@@ -198,11 +198,16 @@ export class WhatsappController {
         //agora o chatId está vindo, eu tinha esquecido de fazer o setter e o getter dele no User
         console.log('chatId', this._contactActive.chatId);
 
+        this.el.panelMessagesContainer.innerHTML = '';
+
         Message.getRef(this._contactActive.chatId)
             .orderBy('timestamp') //estava com problemas com o timeStamp ao inves de timestamp
-            .onSnapshot( docs => {
+            .onSnapshot(docs => {
 
-                this.el.panelMessagesContainer.innerHTML = '';
+                let scrollTop = this.el.panelMessagesContainer.scrollTop;
+                let scrollTopMax = this.el.panelMessagesContainer.scrollHeight - this.el.panelMessagesContainer.offsetHeight;
+
+                let autoScroll = (scrollTop >= (scrollTopMax - 1));
 
                 docs.forEach(doc => {
 
@@ -210,25 +215,57 @@ export class WhatsappController {
 
                     data.id = doc.id;
 
-                    if (!this.el.panelMessagesContainer.querySelector('#_' + data.id)) {
+                    let msgEl = this.el.panelMessagesContainer.querySelector('#_' + data.id);
 
-                        let message = new Message();
+                    let message = new Message();
 
-                        message.fromJSON(data);
+                    message.fromJSON(data);
 
-                        let me = (this._user.email === data.from);
+                    let me = (this._user.email === data.from);
+
+                    if (!msgEl) {
+
+
+                        if (!me) {
+                            doc.ref.set({
+                                status: 'read'
+                            }, {
+                                merge: true
+                            })
+                        }
 
                         let view = message.getViewElement(me);
 
                         this.el.panelMessagesContainer.appendChild(view);
+
+                    } else if (me) {
+                        msgEl.querySelector('.message-status').innerHTML = message.getStatusViewelement().outerHTML;
                     }
 
                 })
+
+                if (autoScroll) {
+                    this.el.panelMessagesContainer.scrollTop = (this.el.panelMessagesContainer.scrollHeight - this.el.panelMessagesContainer.offsetHeight);
+                } else {
+                    this.el.panelMessagesContainer.scrollTop = scrollTop;
+                }
 
             });
     }
 
     iniEvents() {
+
+        this.el.findContact.on('keyup', e => {
+
+            if (this.el.findContact.value.length > 0) {
+                this.el.findContactPlaceholder.hide();
+                this._user.getContacts(this.el.findContact.value);
+            } else {
+                this.el.findContactPlaceholder.show();
+            }
+
+        });
+
         this.el.myPhoto.on('click', e => {
             this.closeAllLeftPanel();
             this.el.panelEditProfile.show();
@@ -329,16 +366,16 @@ export class WhatsappController {
             document.addEventListener('click', this.closeMenuAttach.bind(this))
         });
 
-        ////////////////////////
-
         this.el.btnAttachPhoto.on('click', e => {
             this.el.inputPhoto.click();
         });
 
         this.el.inputPhoto.on('change', e => {
+
             [...this.el.inputPhoto.files].forEach(file => {
-                console.log(file.name);
+                Message.sendImage(this._contactActive.chatId, this._user.email, file);
             });
+
         });
 
         this.el.btnAttachCamera.on('click', e => {
@@ -382,7 +419,48 @@ export class WhatsappController {
         })
 
         this.el.btnSendPicture.on('click', () => {
-            console.log(this.el.pictureCamera.src);
+            this.el.btnSendPicture.disabled = true;
+
+            let regex = /^data:(.+);base64,(.*)$/;
+            let result = this.el.pictureCamera.src.match(regex);
+            let mimetype = result[1];
+            let ext = mimetype.split('/')[1];
+            let fileName = `camera${Date.now()}.${ext}`;
+
+            let picture = new Image();
+            picture.src = this.el.pictureCamera.src;
+            picture.onload = e => {
+                let canvas = document.createElement('canvas');
+                let context = canvas.getContext('2d');
+
+                canvas.width = picture.width;
+                canvas.height = picture.height;
+
+                context.translate(picture.width, 0);
+                context.scale(-1, 1);
+
+                context.drawImage(picture, canvas.width, canvas.height)
+
+                fetch(canvas.toDataURL(mimetype)).then(res => {
+                    return res.ArrayBuffer();
+                }).then(buffer => {
+                    return new File([buffer], fileName, {
+                        type: mimetype
+                    });
+                }).then(file => {
+                    Message.sendImage(this._contactActive.chatId, this._user.email, file);
+                    this.el.btnSendPicture.disabled = false;
+
+                    this.closeAllMainPanel();
+                    this._camera.stopCamera();
+                    this.el.btnReshootPanelCamera.hide();
+                    this.el.pictureCamera.hide();
+                    this.el.videoCamera.show();
+                    this.el.containerSendPicture.hide();
+                    this.el.containerTakePicture.show();
+                    this.el.panelMessagesContainer.hide();
+                })
+            }
         })
 
         this.el.btnAttachDocument.on('click', e => {
@@ -459,6 +537,16 @@ export class WhatsappController {
         this.el.btnSendDocument.on('click', () => {
             this.closeAllMainPanel();
             this.el.panelMessagesContainer.show();
+
+            let file = this.el.inputDocument.files[0];
+            let base64 = this.el.imgPanelDocumentPreview.src;
+
+            Message.sendDocument(
+                this._contactActive.chatId,
+                file,
+                this._user.email,
+                base64
+            );
         })
 
         this.el.btnClosePanelDocumentPreview.on('click', () => {
