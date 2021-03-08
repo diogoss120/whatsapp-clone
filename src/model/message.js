@@ -10,9 +10,6 @@ import {
     Model
 } from "./model";
 
-import {
-    Base64
-} from "../util/base64";
 
 export class Message extends Model {
     constructor() {
@@ -55,10 +52,53 @@ export class Message extends Model {
         this._data.status = value;
     }
 
+    get preview() {
+        return this._data.preview;
+    }
+    set preview(value) {
+        this._data.preview = value;
+    }
+
+    get size() {
+        return this._data.size;
+    }
+    set size(value) {
+        this._data.size = value;
+    }
+
+    get fileType() {
+        return this._data.fileType;
+    }
+    set fileType(value) {
+        this._data.fileType = value;
+    }
+
+    get info() {
+        return this._data.info;
+    }
+    set info(value) {
+        this._data.info = value;
+    }
+
+    get from() {
+        return this._data.from;
+    }
+    set from(value) {
+        this._data.from = value;
+    }
+
+    get filename() {
+        return this._data.filename;
+    }
+    set filename(value) {
+        this._data.filename = value;
+    }
+
     getViewElement(me = true) {
 
         let div = document.createElement('div');
         div.className = 'message';
+        div.id = `_${this.id}`;
 
         switch (this.type) {
 
@@ -85,7 +125,7 @@ export class Message extends Model {
                                 </div>
                             </div>
                             <div class="_1lC8v">
-                                <div dir="ltr" class="_3gkvk selectable-text invisible-space copyable-text">Nome do Contato Anexado</div>
+                                <div dir="ltr" class="_3gkvk selectable-text invisible-space copyable-text">${this.content.name}</div>
                             </div>
                             <div class="_3a5-b">
                                 <div class="_1DZAH" role="button">
@@ -101,6 +141,16 @@ export class Message extends Model {
 
                 </div>
                 `;
+
+                if(this.content.photo){
+                    let img = div.querySelector('.photo-contact-sended');
+                    img.src = this.content.photo;
+                    img.show();
+                }
+
+                div.querySelector('.btn-message-send').on('click', e => {
+                    console.log('enviar contato');
+                })
                 break;
 
             case 'image':
@@ -242,13 +292,13 @@ export class Message extends Model {
                 <div class="_3_7SH _1ZPgd">
                     <div class="_1fnMt _2CORf">
                         <a class="_1vKRe" href="#">
-                            <div class="_2jTyA" style="background-image: url()"></div>
+                            <div class="_2jTyA" style="background-image: url(${this.preview})"></div>
                             <div class="_12xX7">
                                 <div class="_3eW69">
                                     <div class="JdzFp message-file-icon icon-doc-pdf"></div>
                                 </div>
                                 <div class="nxILt">
-                                    <span dir="auto" class="message-filename">Arquivo.pdf</span>
+                                    <span dir="auto" class="message-filename">${this.filename}</span>
                                 </div>
                                 <div class="_17viz">
                                     <span data-icon="audio-download" class="message-file-download">
@@ -266,9 +316,9 @@ export class Message extends Model {
                             </div>
                         </a>
                         <div class="_3cMIj">
-                            <span class="PyPig message-file-info">32 páginas</span>
-                            <span class="PyPig message-file-type">PDF</span>
-                            <span class="PyPig message-file-size">4 MB</span>
+                            <span class="PyPig message-file-info">${this.info}</span>
+                            <span class="PyPig message-file-type">${this.type}</span>
+                            <span class="PyPig message-file-size">${this.size}</span>
                         </div>
                         <div class="_3Lj_s">
                             <div class="_1DZAH" role="button">
@@ -277,13 +327,16 @@ export class Message extends Model {
                             </div>
                         </div>
                     </div>
-                </div>
-                                            `;
+                </div>`;
+
+                div.on('click', e => {
+                    window.open(this.content);
+                });
                 break;
 
             default:
                 div.innerHTML = `
-                 <div class="font-style _3DFk6 tail" id="_${this.id}" >
+                 <div class="font-style _3DFk6 tail">
                     <span class="tail-container"></span>
                     <span class="tail-container highlight"></span>
                     <div class="Tkt2p">
@@ -313,35 +366,96 @@ export class Message extends Model {
         return div;
     }
 
+    static sendContact(chatId, from, contact){
+
+        Message.send(chatId,'contact', from, contact).then( data => {
+
+        });
+    }
+
+    static upload(file, from) {
+
+        return new Promise((s, r) => {
+            let uploadtask = Firebase.hd().ref(from).child(Date.now() + '_' + file.name).put(file);
+
+            uploadtask.on('state_changed', e => {
+                console.info('upload', e);
+            }, err => {
+                r(err);
+            }, () => {
+                s(uploadtask.snapshot);
+            })
+        });
+
+    }
+
     static sendImage(chatId, from, file) {
 
         return new Promise((s, f) => {
 
-            let uploadtask = Firebase.hd().ref(from).child(Date.now() + '_' + file.name).put(file);
-
-            console.log('teste', uploadtask);
-            uploadtask.on('state_changed', e => {
-                console.info('upload', e);
-            }, err => {
-                console.error(err);
-            }, () => {
-                Message.send(chatId, 'image', from, uploadtask.snapshot.downloadURL).then(() => {
+            Message.upload(file, from).then(snapshot => {
+                Message.send(
+                    chatId,
+                    'image',
+                    from,
+                    snapshot.downloadURL
+                ).then(() => {
                     s();
                 })
-            })
+            });
 
         });
 
     }
 
-    static sendDocument(chatId, file, from, preview) {
+    static sendDocument(chatId, file, from, filePreview, info) {
 
+        Message.send(chatId, 'document', from, '').then(msgRef => {
+
+            Message.upload(file, from).then(snapshot => {
+
+                let fileDownload = snapshot.downloadURL;
+
+                if (filePreview) {
+
+                    Message.upload(filePreview, from).then(snapshot2 => {
+
+                        let filePreviewDownload = snapshot2.downloadURL;
+                        msgRef.set({
+                            content: fileDownload,
+                            preview: filePreviewDownload,
+                            filename: file.name,
+                            size: file.size,
+                            fileType: file.type,
+                            status: 'send',
+                            info
+                        }, {
+                            merge: true
+                        })
+
+                    });
+                } else {
+                    msgRef.set({
+                        content: fileDownload,
+                        filename: file.name,
+                        size: file.size,
+                        fileType: file.type,
+                        status: 'send',
+                    }, {
+                        merge: true
+                    })
+                }
+
+            });
+
+        });
     }
 
     static send(chatId, type, from, content) {
         console.log('Message content', content);
 
         return new Promise((resolve, reject) => {
+
             Message.getRef(chatId).add({
                 content,
                 timestamp: new Date(),
@@ -350,12 +464,14 @@ export class Message extends Model {
                 from
             }).then(data => {
 
-                data.parent.doc(data.id).set({
+                let docRef = data.parent.doc(data.id);
+
+                docRef.set({
                     status: 'send'
                 }, {
                     merge: true
                 }).then(() => {
-                    resolve();
+                    resolve(docRef);
                 })
 
             }).catch(err => {

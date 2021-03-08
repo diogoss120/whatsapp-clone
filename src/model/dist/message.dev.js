@@ -11,8 +11,6 @@ var _format = require("../util/format");
 
 var _model = require("./model");
 
-var _base = require("../util/base64");
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -45,13 +43,26 @@ function (_Model) {
   _createClass(Message, [{
     key: "getViewElement",
     value: function getViewElement() {
+      var _this = this;
+
       var me = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       var div = document.createElement('div');
       div.className = 'message';
+      div.id = "_".concat(this.id);
 
       switch (this.type) {
         case 'contact':
-          div.innerHTML = "\n                <div class=\"_3_7SH kNKwo tail\">\n                    <span class=\"tail-container\"></span>\n                    <span class=\"tail-container highlight\"></span>\n                    <div class=\"_1YNgi copyable-text\">\n                        <div class=\"_3DZ69\" role=\"button\">\n                            <div class=\"_20hTB\">\n                                <div class=\"_1WliW\" style=\"height: 49px; width: 49px;\">\n                                    <img src=\"#\" class=\"Qgzj8 gqwaM photo-contact-sended\" style=\"display:none\">\n                                    <div class=\"_3ZW2E\">\n                                        <span data-icon=\"default-user\">\n                                            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 212 212\" width=\"212\" height=\"212\">\n                                                <path fill=\"#DFE5E7\" d=\"M106.251.5C164.653.5 212 47.846 212 106.25S164.653 212 106.25 212C47.846 212 .5 164.654.5 106.25S47.846.5 106.251.5z\"></path>\n                                                <g fill=\"#FFF\">\n                                                    <path d=\"M173.561 171.615a62.767 62.767 0 0 0-2.065-2.955 67.7 67.7 0 0 0-2.608-3.299 70.112 70.112 0 0 0-3.184-3.527 71.097 71.097 0 0 0-5.924-5.47 72.458 72.458 0 0 0-10.204-7.026 75.2 75.2 0 0 0-5.98-3.055c-.062-.028-.118-.059-.18-.087-9.792-4.44-22.106-7.529-37.416-7.529s-27.624 3.089-37.416 7.529c-.338.153-.653.318-.985.474a75.37 75.37 0 0 0-6.229 3.298 72.589 72.589 0 0 0-9.15 6.395 71.243 71.243 0 0 0-5.924 5.47 70.064 70.064 0 0 0-3.184 3.527 67.142 67.142 0 0 0-2.609 3.299 63.292 63.292 0 0 0-2.065 2.955 56.33 56.33 0 0 0-1.447 2.324c-.033.056-.073.119-.104.174a47.92 47.92 0 0 0-1.07 1.926c-.559 1.068-.818 1.678-.818 1.678v.398c18.285 17.927 43.322 28.985 70.945 28.985 27.678 0 52.761-11.103 71.055-29.095v-.289s-.619-1.45-1.992-3.778a58.346 58.346 0 0 0-1.446-2.322zM106.002 125.5c2.645 0 5.212-.253 7.68-.737a38.272 38.272 0 0 0 3.624-.896 37.124 37.124 0 0 0 5.12-1.958 36.307 36.307 0 0 0 6.15-3.67 35.923 35.923 0 0 0 9.489-10.48 36.558 36.558 0 0 0 2.422-4.84 37.051 37.051 0 0 0 1.716-5.25c.299-1.208.542-2.443.725-3.701.275-1.887.417-3.827.417-5.811s-.142-3.925-.417-5.811a38.734 38.734 0 0 0-1.215-5.494 36.68 36.68 0 0 0-3.648-8.298 35.923 35.923 0 0 0-9.489-10.48 36.347 36.347 0 0 0-6.15-3.67 37.124 37.124 0 0 0-5.12-1.958 37.67 37.67 0 0 0-3.624-.896 39.875 39.875 0 0 0-7.68-.737c-21.162 0-37.345 16.183-37.345 37.345 0 21.159 16.183 37.342 37.345 37.342z\"></path>\n                                                </g>\n                                            </svg>\n                                        </span>\n                                    </div>\n                                </div>\n                            </div>\n                            <div class=\"_1lC8v\">\n                                <div dir=\"ltr\" class=\"_3gkvk selectable-text invisible-space copyable-text\">Nome do Contato Anexado</div>\n                            </div>\n                            <div class=\"_3a5-b\">\n                                <div class=\"_1DZAH\" role=\"button\">\n                                    <span class=\"message-time\">17:01</span>\n                                    \n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"_6qEXM\">\n                            <div class=\"btn-message-send\" role=\"button\">Enviar mensagem</div>\n                        </div>\n                    </div>\n\n                </div>\n                ";
+          div.innerHTML = "\n                <div class=\"_3_7SH kNKwo tail\">\n                    <span class=\"tail-container\"></span>\n                    <span class=\"tail-container highlight\"></span>\n                    <div class=\"_1YNgi copyable-text\">\n                        <div class=\"_3DZ69\" role=\"button\">\n                            <div class=\"_20hTB\">\n                                <div class=\"_1WliW\" style=\"height: 49px; width: 49px;\">\n                                    <img src=\"#\" class=\"Qgzj8 gqwaM photo-contact-sended\" style=\"display:none\">\n                                    <div class=\"_3ZW2E\">\n                                        <span data-icon=\"default-user\">\n                                            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 212 212\" width=\"212\" height=\"212\">\n                                                <path fill=\"#DFE5E7\" d=\"M106.251.5C164.653.5 212 47.846 212 106.25S164.653 212 106.25 212C47.846 212 .5 164.654.5 106.25S47.846.5 106.251.5z\"></path>\n                                                <g fill=\"#FFF\">\n                                                    <path d=\"M173.561 171.615a62.767 62.767 0 0 0-2.065-2.955 67.7 67.7 0 0 0-2.608-3.299 70.112 70.112 0 0 0-3.184-3.527 71.097 71.097 0 0 0-5.924-5.47 72.458 72.458 0 0 0-10.204-7.026 75.2 75.2 0 0 0-5.98-3.055c-.062-.028-.118-.059-.18-.087-9.792-4.44-22.106-7.529-37.416-7.529s-27.624 3.089-37.416 7.529c-.338.153-.653.318-.985.474a75.37 75.37 0 0 0-6.229 3.298 72.589 72.589 0 0 0-9.15 6.395 71.243 71.243 0 0 0-5.924 5.47 70.064 70.064 0 0 0-3.184 3.527 67.142 67.142 0 0 0-2.609 3.299 63.292 63.292 0 0 0-2.065 2.955 56.33 56.33 0 0 0-1.447 2.324c-.033.056-.073.119-.104.174a47.92 47.92 0 0 0-1.07 1.926c-.559 1.068-.818 1.678-.818 1.678v.398c18.285 17.927 43.322 28.985 70.945 28.985 27.678 0 52.761-11.103 71.055-29.095v-.289s-.619-1.45-1.992-3.778a58.346 58.346 0 0 0-1.446-2.322zM106.002 125.5c2.645 0 5.212-.253 7.68-.737a38.272 38.272 0 0 0 3.624-.896 37.124 37.124 0 0 0 5.12-1.958 36.307 36.307 0 0 0 6.15-3.67 35.923 35.923 0 0 0 9.489-10.48 36.558 36.558 0 0 0 2.422-4.84 37.051 37.051 0 0 0 1.716-5.25c.299-1.208.542-2.443.725-3.701.275-1.887.417-3.827.417-5.811s-.142-3.925-.417-5.811a38.734 38.734 0 0 0-1.215-5.494 36.68 36.68 0 0 0-3.648-8.298 35.923 35.923 0 0 0-9.489-10.48 36.347 36.347 0 0 0-6.15-3.67 37.124 37.124 0 0 0-5.12-1.958 37.67 37.67 0 0 0-3.624-.896 39.875 39.875 0 0 0-7.68-.737c-21.162 0-37.345 16.183-37.345 37.345 0 21.159 16.183 37.342 37.345 37.342z\"></path>\n                                                </g>\n                                            </svg>\n                                        </span>\n                                    </div>\n                                </div>\n                            </div>\n                            <div class=\"_1lC8v\">\n                                <div dir=\"ltr\" class=\"_3gkvk selectable-text invisible-space copyable-text\">".concat(this.content.name, "</div>\n                            </div>\n                            <div class=\"_3a5-b\">\n                                <div class=\"_1DZAH\" role=\"button\">\n                                    <span class=\"message-time\">17:01</span>\n                                    \n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"_6qEXM\">\n                            <div class=\"btn-message-send\" role=\"button\">Enviar mensagem</div>\n                        </div>\n                    </div>\n\n                </div>\n                ");
+
+          if (this.content.photo) {
+            var img = div.querySelector('.photo-contact-sended');
+            img.src = this.content.photo;
+            img.show();
+          }
+
+          div.querySelector('.btn-message-send').on('click', function (e) {
+            console.log('enviar contato');
+          });
           break;
 
         case 'image':
@@ -70,11 +81,14 @@ function (_Model) {
           break;
 
         case 'document':
-          div.innerHTML = "\n                <div class=\"_3_7SH _1ZPgd\">\n                    <div class=\"_1fnMt _2CORf\">\n                        <a class=\"_1vKRe\" href=\"#\">\n                            <div class=\"_2jTyA\" style=\"background-image: url()\"></div>\n                            <div class=\"_12xX7\">\n                                <div class=\"_3eW69\">\n                                    <div class=\"JdzFp message-file-icon icon-doc-pdf\"></div>\n                                </div>\n                                <div class=\"nxILt\">\n                                    <span dir=\"auto\" class=\"message-filename\">Arquivo.pdf</span>\n                                </div>\n                                <div class=\"_17viz\">\n                                    <span data-icon=\"audio-download\" class=\"message-file-download\">\n                                        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 34 34\" width=\"34\" height=\"34\">\n                                            <path fill=\"#263238\" fill-opacity=\".5\" d=\"M17 2c8.3 0 15 6.7 15 15s-6.7 15-15 15S2 25.3 2 17 8.7 2 17 2m0-1C8.2 1 1 8.2 1 17s7.2 16 16 16 16-7.2 16-16S25.8 1 17 1z\"></path>\n                                            <path fill=\"#263238\" fill-opacity=\".5\" d=\"M22.4 17.5h-3.2v-6.8c0-.4-.3-.7-.7-.7h-3.2c-.4 0-.7.3-.7.7v6.8h-3.2c-.6 0-.8.4-.4.8l5 5.3c.5.7 1 .5 1.5 0l5-5.3c.7-.5.5-.8-.1-.8z\"></path>\n                                        </svg>\n                                    </span>\n                                    <div class=\"_3SUnz message-file-load\" style=\"display:none\">\n                                        <svg class=\"_1UDDE\" width=\"32\" height=\"32\" viewBox=\"0 0 43 43\">\n                                            <circle class=\"_3GbTq _37WZ9\" cx=\"21.5\" cy=\"21.5\" r=\"20\" fill=\"none\" stroke-width=\"3\"></circle>\n                                        </svg>\n                                    </div>\n                                </div>\n                            </div>\n                        </a>\n                        <div class=\"_3cMIj\">\n                            <span class=\"PyPig message-file-info\">32 p\xE1ginas</span>\n                            <span class=\"PyPig message-file-type\">PDF</span>\n                            <span class=\"PyPig message-file-size\">4 MB</span>\n                        </div>\n                        <div class=\"_3Lj_s\">\n                            <div class=\"_1DZAH\" role=\"button\">\n                                <span class=\"message-time\">18:56</span>\n                                \n                            </div>\n                        </div>\n                    </div>\n                </div>\n                                            ";
+          div.innerHTML = "\n                <div class=\"_3_7SH _1ZPgd\">\n                    <div class=\"_1fnMt _2CORf\">\n                        <a class=\"_1vKRe\" href=\"#\">\n                            <div class=\"_2jTyA\" style=\"background-image: url(".concat(this.preview, ")\"></div>\n                            <div class=\"_12xX7\">\n                                <div class=\"_3eW69\">\n                                    <div class=\"JdzFp message-file-icon icon-doc-pdf\"></div>\n                                </div>\n                                <div class=\"nxILt\">\n                                    <span dir=\"auto\" class=\"message-filename\">").concat(this.filename, "</span>\n                                </div>\n                                <div class=\"_17viz\">\n                                    <span data-icon=\"audio-download\" class=\"message-file-download\">\n                                        <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 34 34\" width=\"34\" height=\"34\">\n                                            <path fill=\"#263238\" fill-opacity=\".5\" d=\"M17 2c8.3 0 15 6.7 15 15s-6.7 15-15 15S2 25.3 2 17 8.7 2 17 2m0-1C8.2 1 1 8.2 1 17s7.2 16 16 16 16-7.2 16-16S25.8 1 17 1z\"></path>\n                                            <path fill=\"#263238\" fill-opacity=\".5\" d=\"M22.4 17.5h-3.2v-6.8c0-.4-.3-.7-.7-.7h-3.2c-.4 0-.7.3-.7.7v6.8h-3.2c-.6 0-.8.4-.4.8l5 5.3c.5.7 1 .5 1.5 0l5-5.3c.7-.5.5-.8-.1-.8z\"></path>\n                                        </svg>\n                                    </span>\n                                    <div class=\"_3SUnz message-file-load\" style=\"display:none\">\n                                        <svg class=\"_1UDDE\" width=\"32\" height=\"32\" viewBox=\"0 0 43 43\">\n                                            <circle class=\"_3GbTq _37WZ9\" cx=\"21.5\" cy=\"21.5\" r=\"20\" fill=\"none\" stroke-width=\"3\"></circle>\n                                        </svg>\n                                    </div>\n                                </div>\n                            </div>\n                        </a>\n                        <div class=\"_3cMIj\">\n                            <span class=\"PyPig message-file-info\">").concat(this.info, "</span>\n                            <span class=\"PyPig message-file-type\">").concat(this.type, "</span>\n                            <span class=\"PyPig message-file-size\">").concat(this.size, "</span>\n                        </div>\n                        <div class=\"_3Lj_s\">\n                            <div class=\"_1DZAH\" role=\"button\">\n                                <span class=\"message-time\">18:56</span>\n                                \n                            </div>\n                        </div>\n                    </div>\n                </div>");
+          div.on('click', function (e) {
+            window.open(_this.content);
+          });
           break;
 
         default:
-          div.innerHTML = "\n                 <div class=\"font-style _3DFk6 tail\" id=\"_".concat(this.id, "\" >\n                    <span class=\"tail-container\"></span>\n                    <span class=\"tail-container highlight\"></span>\n                    <div class=\"Tkt2p\">\n                        <div class=\"_3zb-j ZhF0n\">\n                            <span dir=\"ltr\" class=\"selectable-text invisible-space message-text\">").concat(this.content, "</span>\n                        </div>\n                        <div class=\"_2f-RV\">\n                            <div class=\"_1DZAH\">\n                                <span class=\"message-time\">").concat(_format.Format.timeStampToTime(this.timeStamp), "</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n               ");
+          div.innerHTML = "\n                 <div class=\"font-style _3DFk6 tail\">\n                    <span class=\"tail-container\"></span>\n                    <span class=\"tail-container highlight\"></span>\n                    <div class=\"Tkt2p\">\n                        <div class=\"_3zb-j ZhF0n\">\n                            <span dir=\"ltr\" class=\"selectable-text invisible-space message-text\">".concat(this.content, "</span>\n                        </div>\n                        <div class=\"_2f-RV\">\n                            <div class=\"_1DZAH\">\n                                <span class=\"message-time\">").concat(_format.Format.timeStampToTime(this.timeStamp), "</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n               ");
           break;
       }
 
@@ -154,19 +168,80 @@ function (_Model) {
     set: function set(value) {
       this._data.status = value;
     }
+  }, {
+    key: "preview",
+    get: function get() {
+      return this._data.preview;
+    },
+    set: function set(value) {
+      this._data.preview = value;
+    }
+  }, {
+    key: "size",
+    get: function get() {
+      return this._data.size;
+    },
+    set: function set(value) {
+      this._data.size = value;
+    }
+  }, {
+    key: "fileType",
+    get: function get() {
+      return this._data.fileType;
+    },
+    set: function set(value) {
+      this._data.fileType = value;
+    }
+  }, {
+    key: "info",
+    get: function get() {
+      return this._data.info;
+    },
+    set: function set(value) {
+      this._data.info = value;
+    }
+  }, {
+    key: "from",
+    get: function get() {
+      return this._data.from;
+    },
+    set: function set(value) {
+      this._data.from = value;
+    }
+  }, {
+    key: "filename",
+    get: function get() {
+      return this._data.filename;
+    },
+    set: function set(value) {
+      this._data.filename = value;
+    }
   }], [{
-    key: "sendImage",
-    value: function sendImage(chatId, from, file) {
-      return new Promise(function (s, f) {
+    key: "sendContact",
+    value: function sendContact(chatId, from, contact) {
+      Message.send(chatId, 'contact', from, contact).then(function (data) {});
+    }
+  }, {
+    key: "upload",
+    value: function upload(file, from) {
+      return new Promise(function (s, r) {
         var uploadtask = _firebase.Firebase.hd().ref(from).child(Date.now() + '_' + file.name).put(file);
 
-        console.log('teste', uploadtask);
         uploadtask.on('state_changed', function (e) {
           console.info('upload', e);
         }, function (err) {
-          console.error(err);
+          r(err);
         }, function () {
-          Message.send(chatId, 'image', from, uploadtask.snapshot.downloadURL).then(function () {
+          s(uploadtask.snapshot);
+        });
+      });
+    }
+  }, {
+    key: "sendImage",
+    value: function sendImage(chatId, from, file) {
+      return new Promise(function (s, f) {
+        Message.upload(file, from).then(function (snapshot) {
+          Message.send(chatId, 'image', from, snapshot.downloadURL).then(function () {
             s();
           });
         });
@@ -174,7 +249,40 @@ function (_Model) {
     }
   }, {
     key: "sendDocument",
-    value: function sendDocument(chatId, file, from, preview) {}
+    value: function sendDocument(chatId, file, from, filePreview, info) {
+      Message.send(chatId, 'document', from, '').then(function (msgRef) {
+        Message.upload(file, from).then(function (snapshot) {
+          var fileDownload = snapshot.downloadURL;
+
+          if (filePreview) {
+            Message.upload(filePreview, from).then(function (snapshot2) {
+              var filePreviewDownload = snapshot2.downloadURL;
+              msgRef.set({
+                content: fileDownload,
+                preview: filePreviewDownload,
+                filename: file.name,
+                size: file.size,
+                fileType: file.type,
+                status: 'send',
+                info: info
+              }, {
+                merge: true
+              });
+            });
+          } else {
+            msgRef.set({
+              content: fileDownload,
+              filename: file.name,
+              size: file.size,
+              fileType: file.type,
+              status: 'send'
+            }, {
+              merge: true
+            });
+          }
+        });
+      });
+    }
   }, {
     key: "send",
     value: function send(chatId, type, from, content) {
@@ -187,12 +295,13 @@ function (_Model) {
           type: type,
           from: from
         }).then(function (data) {
-          data.parent.doc(data.id).set({
+          var docRef = data.parent.doc(data.id);
+          docRef.set({
             status: 'send'
           }, {
             merge: true
           }).then(function () {
-            resolve();
+            resolve(docRef);
           });
         })["catch"](function (err) {
           reject(err);

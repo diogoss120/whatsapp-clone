@@ -21,6 +21,10 @@ var _chat = require("../model/chat");
 
 var _message = require("../model/message");
 
+var _base = require("../util/base64");
+
+var _contactsController = require("../controller/contactsController");
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -179,7 +183,13 @@ function () {
             var view = message.getViewElement(me);
 
             _this3.el.panelMessagesContainer.appendChild(view);
-          } else if (me) {
+          } else {
+            var _view = message.getViewElement(me);
+
+            msgEl.innerHTML = _view.innerHTML;
+          }
+
+          if (msgEl && me) {
             msgEl.querySelector('.message-status').innerHTML = message.getStatusViewelement().outerHTML;
           }
         });
@@ -464,8 +474,17 @@ function () {
 
         var file = _this4.el.inputDocument.files[0];
         var base64 = _this4.el.imgPanelDocumentPreview.src;
+        console.log('controller base64', base64);
 
-        _message.Message.sendDocument(_this4._contactActive.chatId, file, _this4._user.email, base64);
+        if (file.type === 'application/pdf') {
+          _base.Base64.toFile(base64).then(function (filePreview) {
+            _message.Message.sendDocument(_this4._contactActive.chatId, file, _this4._user.email, filePreview, _this4.el.infoPanelDocumentPreview.innerHTML);
+          });
+        } else {
+          _message.Message.sendDocument(_this4._contactActive.chatId, file, _this4._user.email);
+        }
+
+        _this4.el.btnClosePanelDocumentPreview.click();
       });
       this.el.btnClosePanelDocumentPreview.on('click', function () {
         _this4.closeAllMainPanel();
@@ -473,10 +492,16 @@ function () {
         _this4.el.panelMessagesContainer.show();
       });
       this.el.btnAttachContact.on('click', function (e) {
-        _this4.el.modalContacts.show();
+        _this4._contacsController = new _contactsController.ContactsController(_this4.el.modalContacts, _this4._user);
+
+        _this4._contacsController.on('selected', function (contact) {
+          _message.Message.sendContact(_this4._contactActive.chatId, _this4._user.email, contact);
+        });
+
+        _this4._contacsController.open();
       });
       this.el.btnCloseModalContacts.on('click', function () {
-        _this4.el.modalContacts.hide();
+        _this4._contacsController.close();
       });
       this.el.btnSendMicrophone.on('click', function (e) {
         _this4.el.recordMicrophone.show();
