@@ -1,21 +1,8 @@
 # Projeto WhatsApp Clone
 
+<p>
+  Projeto desenvolvido junto ao curso JavaScript Completo da Hcode Treinamentos na Udemy.com, onde desenvolvemos as funcionalidades do whatsappp de adicionar contatos e enviar mensagens para os contatos adicionados utilizando o JavaScriot e o Firebase.
+</p>
 
-Projeto desenvolvido como exemplo do Curso Completo de JavaScript na Udemy.com
-
-### Projeto
-![WhatsApp Clone](https://firebasestorage.googleapis.com/v0/b/hcode-com-br.appspot.com/o/whatsapp.jpg?alt=media&token=5fc78e3b-4871-424f-abfa-b765f2515d0c)
-
-### Recursos Usados
-
-Lista de recursos usados em aula para este projeto
-
-| Recurso | Link |
-| ------ | ------ |
-| Webpack | https://webpack.js.org/ |
-| Firebase Authentication | https://firebase.google.com/docs/auth/?authuser=0 |
-| Cloud Firestore | https://firebase.google.com/docs/firestore/?authuser=0 |
-| Cloud Functions | https://firebase.google.com/docs/functions/?hl=pt-br |
-| Cloud Storage | https://firebase.google.com/docs/storage/?authuser=0 |
-| PDF.js | https://mozilla.github.io/pdf.js/ |
-| MediaDevices.getUserMedia() | https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia |
+- Este projeto visa colocar em prática os conhecimentos em JavaScript obtivos no curso.
+- O html e css veio pronto junto ao material do curso, desenvolvi somente o javascript
